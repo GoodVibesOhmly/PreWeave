@@ -1,7 +1,9 @@
+import { config } from "dotenv";
 import { promises } from "fs"
 import Koa from "koa"
 import { router } from "./routes/router"
 async function runServer() {
+    config();
     console.log("starting PreWeave")
     await promises.mkdir("./temp", { recursive: true })
     await promises.mkdir("./dataItems", { recursive: true })
@@ -9,6 +11,10 @@ async function runServer() {
     app.on("error", (err, _) => {
         console.log(err)
     })
+    // not sure if this works?
+    if (process.env?.IS_DMZ) {
+        router.stack = router.stack.filter(r => r.name != "DMZDisable")
+    }
     app.use(router.routes())
     // const server = 
     app.listen(1337);
