@@ -21,7 +21,7 @@ export const httpServerConnection = knex({
 
 export async function insertDataItem(connection: (Knex | Knex.Transaction), item: Transaction | Transaction[]): Promise<boolean> {
     try {
-        await connection("data_items")
+        await connection("transactions")
             .insert(item)
     } catch (e) {
         console.error(`Error occurred while inserting data item - ${e}`);
@@ -47,8 +47,8 @@ export async function exists(connection: (Knex), table: string, whereColumn: str
 }
 
 export async function getDataItem(connection: Knex, id: string): Promise<Transaction> {
-    return connection("data_items")
-        .where("data_item_id", "=", id)
+    return connection("transactions")
+        .where("tx_id", "=", id)
         .first()
 }
 

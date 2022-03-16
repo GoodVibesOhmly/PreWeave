@@ -15,12 +15,12 @@ export async function getData(ctx: Context, next: NextFunction) {
     if (!isArweaveAddress(txId)) {
         return makeError(ctx, 400, "Invalid TxID")
     }
-    const path = `./dataItems/${txId}`
-    if (!checkPath(path)) {
+    const path = `./transactions/${txId}`
+    if (!await checkPath(path)) {
         return makeError(ctx, 404)
     }
 
-    if (!await exists(httpServerConnection, "data_items", "data_item_id", txId)) {
+    if (!await exists(httpServerConnection, "transactions", "tx_id", txId)) {
         return makeError(ctx, 400, "Tx does not exist")
     }
 
@@ -28,9 +28,9 @@ export async function getData(ctx: Context, next: NextFunction) {
     const di = await new FileDataItem(path).tags()
     // todo: remove from DB and add to obj store
 
-    ctx.setHeader("Content-Type", di.find(t => t.name.toLowerCase() === "content-type") ?? "application/octet-stream")
+    ctx.type = di.find(t => t.name.toLowerCase() === "content-type")?.value ?? "application/octet-stream";
     const size = (await promises.stat(path)).size
-    ctx.setHeader("Content-Length", size - tx["data_start"])
-    ctx.body = createReadStream(resolve(path), { start: tx["data_start"] })
+    ctx.length = size - tx["data_start"];
+    ctx.body = createReadStream(resolve(path), { start: +tx["data_start"] })
     await next()
 }

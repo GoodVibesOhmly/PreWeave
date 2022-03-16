@@ -1,16 +1,16 @@
 import { Knex } from "knex"
 export async function up(knex: Knex) {
-    const schema = await knex.schema
+    return knex.schema
         .withSchema("public")
-        .createTable("data_items", (tbl) => {
-            tbl.string("data_item_id").primary().unique();
+        .createTable("transactions", (tbl) => {
+            tbl.string("tx_id").primary().unique();
             tbl.boolean("exportable").defaultTo(false);
             tbl.bigInteger("data_start").notNullable();
-        })
-    return schema
+            tbl.timestamp("date_created").notNullable().defaultTo(knex.fn.now());
+        });
 }
 export async function down(knex: Knex) {
     await knex.schema
         .withSchema("public")
-        .dropTableIfExists("data_items")
+        .dropTableIfExists("transactions")
 }

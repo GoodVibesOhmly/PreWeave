@@ -8,7 +8,7 @@ async function runServer() {
 
     console.log("starting PreWeave")
     await promises.mkdir("./temp", { recursive: true })
-    await promises.mkdir("./dataItems", { recursive: true })
+    await promises.mkdir("./transactions", { recursive: true })
     const app = new Koa()
     app.use(koaLogger(((str) => {
         console.log(str);
@@ -23,7 +23,7 @@ async function runServer() {
     app.use(router.routes())
 
 
-    app.listen(80);
+    app.listen(+(process.env.PORT ?? 8080));
     console.log("started server")
 
 }

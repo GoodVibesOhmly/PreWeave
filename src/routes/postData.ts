@@ -7,11 +7,9 @@ import { pipeline } from "stream/promises";
 import { createData } from "arbundles";
 import { ARSigner } from "../utils/crypto";
 import { httpServerConnection, insertDataItem } from "../utils/db";
-import { verifyItem } from "../utils/crypto";
-import { createHash, randomBytes } from "crypto";
-import base64url from "base64url";
+import { randomBytes } from "crypto";
 import { resolve } from "path"
-import { FileDataItem } from "arbundles/file"
+// import { FileDataItem } from "arbundles/file"
 
 
 export async function downloadData(ctx: Context, next: NextFunction) {
@@ -31,7 +29,7 @@ export async function downloadData(ctx: Context, next: NextFunction) {
         await pipeline(
             ctx.request.req,
             wStrm
-        )
+        );
         await new Promise((r, e) => {
             wStrm.close(er => {
                 if (er) e(er);
@@ -47,7 +45,7 @@ export async function downloadData(ctx: Context, next: NextFunction) {
         return makeError(ctx, 500)
     }
 
-    await next()
+    await next();
 }
 
 export async function signData(ctx: Context, next: NextFunction) {
@@ -56,13 +54,20 @@ export async function signData(ctx: Context, next: NextFunction) {
         return makeError(ctx, 500)
     }
     const path = ctx.state.filePath;
-    if (!checkPath(ctx.state.filePath)) {
+    if (!await checkPath(ctx.state.filePath)) {
         return makeError(ctx, 500)
     }
     try {
         console.debug("reading data")
         const data = await promises.readFile(path);
         console.debug("signing data")
+        console.log({
+            tags: [
+                { name: "Content-Type", value: ctx.headers["content-type"] },
+                { name: "application", value: "preweave" }
+            ],
+            anchor: randomBytes(32).toString("base64").slice(0, 32)
+        })
         const dataItem = createData(data, ARSigner, {
             tags: [
                 { name: "Content-Type", value: ctx.headers["content-type"] },
@@ -70,6 +75,7 @@ export async function signData(ctx: Context, next: NextFunction) {
             ],
             anchor: randomBytes(32).toString("base64").slice(0, 32)
         })
+        await dataItem.sign(ARSigner);
         console.debug(`writing signed data to ${dataItem.id}`)
         await promises.writeFile(path, dataItem.getRaw())
         ctx.response.body = dataItem.id;
@@ -77,17 +83,18 @@ export async function signData(ctx: Context, next: NextFunction) {
 
         // insert here.
         const tx = {
-            "data_item_id": dataItem.id,
+            "tx_id": dataItem.id,
             "data_start": dataItem.getStartOfData()
-        }
-        await insertDataItem(httpServerConnection, tx)
-
+        };
+        ctx.state.itemId = dataItem.id;
+        console.log(tx);
+        if (!await insertDataItem(httpServerConnection, tx)) return makeError(ctx, 500, "DB error");
     } catch (e) {
         console.error(e)
         return makeError(ctx, 500)
     }
 
-    await next()
+    await next();
 }
 
 // PoC
@@ -98,20 +105,12 @@ export async function moveData(ctx: Context, next: NextFunction) {
         return makeError(ctx, 500);
     }
     try {
-        console.debug("verifying/moving complete dataItem")
-        // verify here
-        const { signature } = await verifyItem(path, ctx.stats.size)
-        // can use owner later on
-        const id = base64url.encode(createHash("sha256").update(signature).digest());
-        // todo: use MinIO
-        await promises.rename(resolve(path), resolve(`./dataItems${id}`))
-        const start = await (new FileDataItem(`./dataItems${id}`)).dataStart()
-        await insertDataItem(httpServerConnection, { "data_item_id": id, "data_start": start })
+        await promises.rename(resolve(path), resolve(`./transactions/${ctx.state.itemId}`));
 
-        console.log(`moved ${id} from temp`)
+        console.log(`moved ${ctx.state.itemId} from temp`)
     } catch (e) {
         console.error(e);
         return makeError(ctx, 500)
     }
-    await next()
+    await next();
 } 
