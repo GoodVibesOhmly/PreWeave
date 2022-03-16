@@ -1,5 +1,5 @@
 import Router from "@koa/router";
-import { getExportable } from "./exportable";
+import { getExportable } from "./getExportable";
 import { getData } from "./getData";
 import { getItem } from "./getItem";
 import { downloadData, signData } from "./postData";
