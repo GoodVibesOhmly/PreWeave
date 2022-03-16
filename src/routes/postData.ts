@@ -8,7 +8,7 @@ import { createData } from "arbundles";
 import { ARSigner } from "../utils/crypto";
 import { httpServerConnection, insertDataItem } from "../utils/db";
 import { verifyItem } from "../utils/crypto";
-import { createHash } from "crypto";
+import { createHash, randomBytes } from "crypto";
 import base64url from "base64url";
 import { resolve } from "path"
 import { FileDataItem } from "arbundles/file"
@@ -67,7 +67,8 @@ export async function signData(ctx: Context, next: NextFunction) {
             tags: [
                 { name: "Content-Type", value: ctx.headers["content-type"] },
                 { name: "application", value: "preweave" }
-            ]
+            ],
+            anchor: randomBytes(32).toString("base64").slice(0, 32)
         })
         console.debug(`writing signed data to ${dataItem.id}`)
         await promises.writeFile(path, dataItem.getRaw())
