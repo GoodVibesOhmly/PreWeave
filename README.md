@@ -17,5 +17,8 @@ Install dependencies:
 Build node:
 ```yarn build```
 
+Migrate DB:
+```yarn migrate:latest```
+
 Run node:
 ```yarn run```
