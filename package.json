@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@koa/router": "^10.1.1",
+    "@types/node-cron": "^3.0.1",
     "arbundles": "^0.6.15",
     "axios": "^0.26.1",
     "base64url": "^3.0.1",
@@ -26,6 +27,7 @@
     "koa-bodyparser": "^4.3.0",
     "koa-logger": "^3.2.1",
     "koa-proxy": "^1.0.0-alpha.3",
+    "node-cron": "^3.0.0",
     "pg": "^8.7.3",
     "tmp-promise": "^3.0.3"
   },

@@ -14,10 +14,11 @@ program.command("mirror").description("mirrors another PreWeave node").argument(
     })
 
 
-program.command("upload").description("Uploads all exportable transactions to Bundlr")
+program.command("export").description("Uploads all exportable transactions to Bundlr")
     .action(async () => {
         console.log("Uploading to Bundlr")
-        await upload()
+        await upload();
+        process.exit(0);
     })
 
 // const options = program.opts();

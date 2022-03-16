@@ -5,7 +5,15 @@ import {httpServerConnection} from "../src/utils/db";
 import {FileDataItem} from "arbundles/file";
 
 export default async function (node: string) {
-    const exportable: string[] = await axios.get(`${node}/exportable`).then(r => r.data);
+    const { protocol, host } = new URL(node);
+
+    let exportable;
+    try {
+        exportable = await axios.get(`${protocol}://${host}/exportable`).then(r => r.data);
+    } catch (e) {
+        console.error(`Error occurred while getting exportables from peer - ${e}`);
+        process.exit(0);
+    }
 
     for (const txId of exportable) {
         const p = `./transactions/${txId}`;

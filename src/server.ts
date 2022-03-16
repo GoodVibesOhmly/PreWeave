@@ -4,7 +4,8 @@ import Koa from "koa"
 import { router } from "./routes/router"
 import koaLogger from "koa-logger"
 process.env = { ...process.env, ...config().parsed };
-async function runServer() {
+
+export async function runServer() {
 
     console.log("starting PreWeave")
     await promises.mkdir("./temp", { recursive: true })
@@ -27,4 +28,3 @@ async function runServer() {
     console.log("started server")
 
 }
-runServer()
