@@ -1,7 +1,7 @@
 export type NextFunction = () => Promise<any>
 
 export type Transaction = {
-    id: string,
-    start: number,
+    "data_item_id": string,
+    "data_start": number,
     exportable?: boolean
 }

@@ -30,7 +30,7 @@ export async function getData(ctx: Context, next: NextFunction) {
 
     ctx.setHeader("Content-Type", di.find(t => t.name.toLowerCase() === "content-type") ?? "application/octet-stream")
     const size = (await promises.stat(path)).size
-    ctx.setHeader("Content-Length", size - tx.start)
-    ctx.body = createReadStream(resolve(path), { start: tx.start })
-    return await next()
+    ctx.setHeader("Content-Length", size - tx["data_start"])
+    ctx.body = createReadStream(resolve(path), { start: tx["data_start"] })
+    await next()
 }

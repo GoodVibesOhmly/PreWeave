@@ -1,5 +1,8 @@
+import { config } from "dotenv";
 import knex, { Knex } from "knex";
 import { Transaction } from "../types";
+
+process.env = { ...process.env, ...config().parsed };
 
 export const httpServerConnection = knex({
     client: "pg",

@@ -15,6 +15,7 @@ import { FileDataItem } from "arbundles/file"
 
 
 export async function downloadData(ctx: Context, next: NextFunction) {
+
     let path;
     try {
         // @ts-ignore
@@ -38,7 +39,6 @@ export async function downloadData(ctx: Context, next: NextFunction) {
             })
         })
         ctx.stats = await promises.stat(path)
-
     } catch (e) {
         console.error(e)
         if (path) {
@@ -46,7 +46,8 @@ export async function downloadData(ctx: Context, next: NextFunction) {
         }
         return makeError(ctx, 500)
     }
-    return await next()
+
+    await next()
 }
 
 export async function signData(ctx: Context, next: NextFunction) {
@@ -70,13 +71,13 @@ export async function signData(ctx: Context, next: NextFunction) {
         })
         console.debug(`writing signed data to ${dataItem.id}`)
         await promises.writeFile(path, dataItem.getRaw())
-        ctx.body = dataItem.id;
-        ctx.status = 200;
+        ctx.response.body = dataItem.id;
+        ctx.response.status = 200;
 
         // insert here.
         const tx = {
-            id: dataItem.id,
-            start: dataItem.getStartOfData()
+            "data_item_id": dataItem.id,
+            "data_start": dataItem.getStartOfData()
         }
         await insertDataItem(httpServerConnection, tx)
 
@@ -84,7 +85,8 @@ export async function signData(ctx: Context, next: NextFunction) {
         console.error(e)
         return makeError(ctx, 500)
     }
-    return await next()
+
+    await next()
 }
 
 // PoC
@@ -103,12 +105,12 @@ export async function moveData(ctx: Context, next: NextFunction) {
         // todo: use MinIO
         await promises.rename(resolve(path), resolve(`./dataItems${id}`))
         const start = await (new FileDataItem(`./dataItems${id}`)).dataStart()
-        await insertDataItem(httpServerConnection, { id, start })
+        await insertDataItem(httpServerConnection, { "data_item_id": id, "data_start": start })
 
         console.log(`moved ${id} from temp`)
     } catch (e) {
         console.error(e);
         return makeError(ctx, 500)
     }
-    return await next()
+    await next()
 } 
