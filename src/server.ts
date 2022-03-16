@@ -11,12 +11,12 @@ async function runServer() {
     app.on("error", (err, _) => {
         console.log(err)
     })
-    // not sure if this works?
+
     if (process.env?.IS_DMZ) {
         router.stack = router.stack.filter(r => r.name != "DMZDisable")
     }
     app.use(router.routes())
-    // const server = 
+
     app.listen(1337);
     console.log("started server")
 
