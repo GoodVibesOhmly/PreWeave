@@ -36,10 +36,10 @@
         "error", 
         {"selector": "class","format":["StrictPascalCase"]},
         {"selector": "interface","format":["StrictPascalCase"]},
-        {"selector": "classProperty","format":["camelCase"], "leadingUnderscore":"allow"},
+//        {"selector": "classProperty","format":["camelCase"], "leadingUnderscore":"allow"},
         {"selector": "objectLiteralProperty", "format":null},
         {"selector":"typeAlias", "format":["PascalCase"]},
-        {"selector":"variable", "modifiers":["exported"], "format":["PascalCase"]},
+//        {"selector":"variable", "modifiers":["exported"], "format":["PascalCase"]},
         {"selector": "default","format": ["strictCamelCase"], "leadingUnderscore": "allow" } //this must be the last rule
       ]
     }

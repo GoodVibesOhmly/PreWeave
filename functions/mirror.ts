@@ -1,10 +1,10 @@
 import axios from "axios";
-import {pipeline} from "stream/promises";
+import { pipeline } from "stream/promises";
 import * as fs from "fs";
-import {httpServerConnection} from "../src/utils/db";
-import {FileDataItem} from "arbundles/file";
+import { httpServerConnection } from "../src/utils/db";
+import { FileDataItem } from "arbundles/file";
 
-export default async function (node: string) {
+export default async function (node: string): Promise<void> {
     const { protocol, host } = new URL(node);
 
     let exportable;
@@ -12,7 +12,7 @@ export default async function (node: string) {
         exportable = await axios.get(`${protocol}://${host}/exportable`).then(r => r.data);
     } catch (e) {
         console.error(`Error occurred while getting exportables from peer - ${e}`);
-        process.exit(0);
+        process.exit(0); 
     }
 
     for (const txId of exportable) {

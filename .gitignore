@@ -7,3 +7,5 @@ test/
 temp/
 dataItems/
 .env
+.idea
+.vscode

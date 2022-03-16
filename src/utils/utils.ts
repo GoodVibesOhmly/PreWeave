@@ -1,10 +1,9 @@
 import { PathLike, promises } from "fs";
 import { Context } from "koa";
 
-export async function makeError(ctx: Context, code?: number, msg?: string) {
+export async function makeError(ctx: Context, code?: number, msg?: string): Promise<void> {
     ctx.res.statusMessage = msg;
-    ctx.res.statusCode = code
-    return ctx;
+    ctx.res.statusCode = code;
 }
 
 export const checkPath = async (path: PathLike): Promise<boolean> => { return promises.stat(path).then(_ => true).catch(_ => false) }

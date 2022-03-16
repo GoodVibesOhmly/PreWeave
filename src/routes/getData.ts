@@ -6,7 +6,7 @@ import { resolve } from "path"
 import { exists, getDataItem, httpServerConnection } from "../utils/db";
 import { FileDataItem } from "arbundles/file";
 
-export async function getData(ctx: Context, next: NextFunction) {
+export async function getData(ctx: Context, next: NextFunction): Promise<void> {
     const txId = ctx.params.txId;
     if (!txId) {
         return makeError(ctx, 400, "No TxID specified")

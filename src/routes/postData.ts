@@ -12,11 +12,10 @@ import { resolve } from "path"
 // import { FileDataItem } from "arbundles/file"
 
 
-export async function downloadData(ctx: Context, next: NextFunction) {
+export async function downloadData(ctx: Context, next: NextFunction): Promise<void> {
 
     let path;
     try {
-        // @ts-ignore
         ["content-type", "content-length"].forEach(h => {
             if (!ctx.header[h]) { return makeError(ctx, 400, `${h} required`) }
         });
@@ -48,7 +47,7 @@ export async function downloadData(ctx: Context, next: NextFunction) {
     await next();
 }
 
-export async function signData(ctx: Context, next: NextFunction) {
+export async function signData(ctx: Context, next: NextFunction): Promise<void> {
     if (!ctx.state.filePath) {
         console.error("no path, aborting");
         return makeError(ctx, 500)
@@ -97,8 +96,7 @@ export async function signData(ctx: Context, next: NextFunction) {
     await next();
 }
 
-// PoC
-export async function moveData(ctx: Context, next: NextFunction) {
+export async function moveData(ctx: Context, next: NextFunction): Promise<void> {
 
     const path = ctx.state?.filePath
     if (!path || !await checkPath(path)) {
