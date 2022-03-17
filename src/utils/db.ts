@@ -21,8 +21,9 @@ export const httpServerConnection = knex({
 
 export async function insertDataItem(connection: (Knex | Knex.Transaction), item: Transaction | Transaction[]): Promise<boolean> {
     try {
-        await connection("transactions")
+        console.log(await connection("transactions")
             .insert(item)
+            .returning("exportable"));
     } catch (e) {
         console.error(`Error occurred while inserting data item - ${e}`);
         console.debug(JSON.stringify(item))
