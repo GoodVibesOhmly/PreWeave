@@ -8,7 +8,7 @@ export function runCron(): void {
 
         const txs = await httpServerConnection("transactions")
             .select("tx_id")
-            .where("date_created", ">", httpServerConnection.raw("now() - interval '1 year'"))
+            .where("date_created", "<", httpServerConnection.raw("now() - interval '1 year'"))
             .then(r => r.map(row => row.tx_id));
 
         for (const txId of txs) {

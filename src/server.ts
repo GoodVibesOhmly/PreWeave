@@ -18,9 +18,6 @@ export async function runServer(): Promise<void> {
         console.log(err)
     })
 
-    if (process.env.IS_DMZ === "true") {
-        router.stack = router.stack.filter(r => r.name != "DMZDisable")
-    }
     app.use(router.routes())
 
 
