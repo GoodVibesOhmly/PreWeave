@@ -8,6 +8,6 @@ import { proxyToBundlr } from "./postDataItem";
 export const router = new Router()
     .post("/data", downloadData, signData, moveData)
     .post("/tx", proxyToBundlr)
-    .get("/:txId", getData)
     .get("/tx/:txId", getItem)
     .get("/exportable", getExportable)
+    .get("/:txId", getData);
