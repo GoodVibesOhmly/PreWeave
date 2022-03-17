@@ -5,7 +5,7 @@ yarn-error.log
 wallet.json
 test/
 temp/
-dataItems/
+transactions/
 .env
-.idea
-.vscode
+.idea/
+.vscode/
