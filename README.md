@@ -1,3 +1,5 @@
+![PreWeave Logo](./assets/logo.jpeg)
+
 # PreWeave
 
 In this document we describe PreWeave, an optional service in front of the Arweave network that allows users to create and use decentralized IDs for their content, without immediately committing the data for storage.
