@@ -1,19 +1,18 @@
 import cron from "node-cron";
-import * as fs from "fs";
-
-// eslint-disable-next-line @typescript-eslint/naming-convention
-const YEAR_IN_MS = 3.154e+10;
+import { httpServerConnection } from "./utils/db";
+import { exportTx } from "./utils";
 
 export function runCron(): void {
     cron.schedule("* * * 1 *", async function () {
-        for await (const file of await fs.promises.opendir("./transactions")) {
-            if (!file.isFile()) continue;
+        // Get all txs which aren't exported and more than a year old...
 
-            const stat = await fs.promises.stat(file.name);
+        const txs = await httpServerConnection("transactions")
+            .select("tx_id")
+            .where("date_created", ">", httpServerConnection.raw("now() - interval '1 year'"))
+            .then(r => r.map(row => row.tx_id));
 
-            if ((Date.now() - stat.birthtimeMs) > YEAR_IN_MS) {
-                await fs.promises.unlink(file.name);
-            }
+        for (const txId of txs) {
+            await exportTx(txId);
         }
     });
 }
